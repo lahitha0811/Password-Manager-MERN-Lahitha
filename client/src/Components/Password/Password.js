@@ -4,10 +4,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash, faTrash, faPen } from "@fortawesome/free-solid-svg-icons";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { decryptThePass, deleteAPassword } from "../../axios/instance";
+import instance, { deleteAPassword, decryptThePass } from "../../axios/instance";
+
 import { delPass } from "../../redux/actions";
 import { useDispatch } from "react-redux";
-import axios from "axios";
+//import axios from "axios";
 
 function Password({ id, name, encryptedPassword, email, iv }) {
   const [show, setShow] = useState(false);
@@ -53,29 +54,26 @@ function Password({ id, name, encryptedPassword, email, iv }) {
   };
 
   // Update all fields
-  const updatePassword = async () => {
-    try {
-      const res = await axios.put(
-        "http://localhost:8000/updatepassword",
-        {
-          id,
-          platform: editPlatform,
-          email: editEmail,
-          userPass: editPass || decPassword,
-        },
-        { withCredentials: true }
-      );
+ const updatePassword = async () => {
+  try {
+    const res = await instance.put("/updatepassword", {
+      id,
+      platform: editPlatform,
+      email: editEmail,
+      userPass: editPass || decPassword,
+    });
 
-      if (res.status === 200) {
-        toast.success("Password updated successfully!");
-        setDecPassword(editPass || decPassword);
-        setIsEditing(false);
-      }
-    } catch (err) {
-      console.log(err);
-      toast.error("Failed to update password.");
+    if (res.status === 200) {
+      toast.success("Password updated successfully!");
+      setDecPassword(editPass || decPassword);
+      setIsEditing(false);
     }
-  };
+  } catch (err) {
+    console.log(err);
+    toast.error("Failed to update password.");
+  }
+};
+
 
   return (
     <div className="password">

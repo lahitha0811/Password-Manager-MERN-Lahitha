@@ -1,26 +1,40 @@
+const path = require("path");
 const express = require("express");
 const app = express();
 const dotenv = require("dotenv");
-const cors = require("cors");
-const cookieParser = require('cookie-parser'); 
+const cookieParser = require("cookie-parser");
 
-app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
-app.use(cookieParser());   
+// Load env
+dotenv.config({ path: path.join(__dirname, "config.env") });
 
-// Setting up deotenv
-dotenv.config({ path: "./config.env" });
+// Middleware
+app.use(express.json());
+app.use(cookieParser());
 
-const PORT = process.env.PORT || 8001; 
+// ===== SERVE REACT FIRST =====
+const __dirname1 = path.resolve();
 
-// Connecting with database
-require("./db/connection"); 
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname1, "client/build")));
+}
 
-app.use(express.json()); 
+// DB
+require("./db/connection");
 
-// Linking router files 
-app.use(require("./router/routing")); 
- 
-// Listening to port 
+// Routes
+app.use(require("./router/routing"));
+
+// React fallback (AFTER routes)
+if (process.env.NODE_ENV === "production") {
+  app.get("*", (req, res) => {
+    res.sendFile(
+      path.join(__dirname1, "client", "build", "index.html")
+    );
+  });
+}
+
+// Start server
+const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
-    console.log(`listening to port : http://localhost:${PORT}/`) 
-}) 
+  console.log(`Server running on port ${PORT}`);
+});

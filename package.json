@@ -1,0 +1,9 @@
+{
+  "name": "password-manager-mern",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "npm install --prefix client && npm run build --prefix client",
+    "start": "node server/app.js"
+  }
+}
