@@ -2,13 +2,14 @@
   "name": "password-manager-mern",
   "version": "1.0.0",
   "private": true,
+  "engines": {
+    "node": "18.x"
+  },
   "scripts": {
     "build": "npm install --prefix client && npm run build --prefix client",
     "start": "node server/app.js"
-  },
-  "engines": {
-    "node": "18.x"
   }
+  
 }
 
 
